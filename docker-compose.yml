@@ -1,21 +1,25 @@
 services:
 
   root:
-    build: ./root
+    build: ./images/bind
     container_name: root
     hostname: root
     tty: true
     stdin_open: true
+    volumes:
+      - ./config/root:/etc/bind
     networks:
       dnslab:
         ipv4_address: 10.10.1.1
 
   com:
-    build: ./com
+    build: ./images/bind
     container_name: com
     hostname: com
     tty: true
     stdin_open: true
+    volumes:
+      - ./config/com:/etc/bind  
     networks:
       dnslab:
         ipv4_address: 10.10.2.1
@@ -43,7 +47,7 @@ services:
 networks:
   dnslab:
     driver: bridge
-    internal: true   
+    internal: true
     ipam:
       config:
         - subnet: 10.10.0.0/16
