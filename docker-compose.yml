@@ -1,0 +1,49 @@
+services:
+
+  root:
+    build: ./root
+    container_name: root
+    hostname: root
+    tty: true
+    stdin_open: true
+    networks:
+      dnslab:
+        ipv4_address: 10.10.1.1
+
+  com:
+    build: ./com
+    container_name: com
+    hostname: com
+    tty: true
+    stdin_open: true
+    networks:
+      dnslab:
+        ipv4_address: 10.10.2.1
+
+  resolver:
+    build: ./resolver
+    container_name: resolver
+    hostname: resolver
+    tty: true
+    stdin_open: true
+    networks:
+      dnslab:
+        ipv4_address: 10.10.3.1
+
+  client:
+    build: ./client
+    container_name: client
+    hostname: client
+    tty: true           
+    stdin_open: true    
+    networks:
+      dnslab:
+        ipv4_address: 10.10.4.1
+
+networks:
+  dnslab:
+    driver: bridge
+    internal: true   
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
