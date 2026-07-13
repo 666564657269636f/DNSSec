@@ -1,7 +1,10 @@
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, Template
 from yaml import safe_load
+
+from models.JinjaRender import JinjaRender
+from models.BindConfigGenerator import BindConfigGenerator
+from models.Server import Server
 
 
 CONFIG_PATH: Path = Path('config')
@@ -20,23 +23,19 @@ def load_config(path: Path) -> dict[str, list[dict[str, str]]]:
     return data
 
 
-def generate_compose(config: dict[str, list[dict[str, str]]], template_path: Path, output_path: Path) -> None:
-    parent: str = str(template_path.parent)
-    template_file = str(template_path.name)
-
-    env: Environment = Environment(loader=FileSystemLoader(searchpath=parent))
-    template: Template = env.get_template(name=template_file)
-
-    compose_content: str = template.render(servers=config['servers'])
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(data=compose_content, encoding="utf-8")
-
-
 def main() -> None:
     config: dict[str, list[dict[str, str]]] = load_config(path=CONFIG_PATH / 'lab.yml')
 
-    generate_compose(config=config, template_path=DOCKER_COMPOSE_TEMPLATE_PATH, output_path=DOCKER_COMPOSE_PATH)
+    JinjaRender.render(template_path=DOCKER_COMPOSE_TEMPLATE_PATH, output_path=DOCKER_COMPOSE_PATH, **config)
+    
+    for server in config['servers']:
+        bind: BindConfigGenerator = BindConfigGenerator(server=Server(
+            server['name'],
+            server['container_name'],
+            server['hostname'],
+            server['ip']
+        ))
+        bind.generate_config()
 
 
 if __name__ == "__main__":
