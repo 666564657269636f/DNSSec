@@ -4,8 +4,6 @@ services:
     build: ./images/bind
     container_name: root
     hostname: root
-    tty: true
-    stdin_open: true
     volumes:
       - ./config/root:/etc/bind
     networks:
@@ -16,20 +14,29 @@ services:
     build: ./images/bind
     container_name: com
     hostname: com
-    tty: true
-    stdin_open: true
     volumes:
       - ./config/com:/etc/bind  
     networks:
       dnslab:
         ipv4_address: 10.10.2.1
 
+  test-com:
+    build: ./images/bind
+    container_name: test-com
+    hostname: test-com
+    volumes:
+      - ./config/test-com:/etc/bind
+    networks:
+      dnslab:
+        ipv4_address: 10.10.2.2
+
   resolver:
     build: ./resolver
     container_name: resolver
     hostname: resolver
-    tty: true
-    stdin_open: true
+    volumes:
+      - ./resolver/unbound.conf:/etc/unbound/unbound.conf
+      - ./resolver/root.hints:/etc/unbound/root.hints
     networks:
       dnslab:
         ipv4_address: 10.10.3.1
@@ -39,7 +46,9 @@ services:
     container_name: client
     hostname: client
     tty: true           
-    stdin_open: true    
+    stdin_open: true   
+    dns:
+      - 10.10.3.1 
     networks:
       dnslab:
         ipv4_address: 10.10.4.1
