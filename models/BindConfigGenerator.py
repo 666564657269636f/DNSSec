@@ -22,7 +22,9 @@ class BindConfigGenerator:
 
 
     def _write_db_zone(self) -> None:
-        pass
+        template_path: Path = self.TEMPLATE_BIND_PATH / 'db.zone.j2'
+        output_path: Path = self.output_path / f'db.{ self.server.name }'
+        JinjaRender.render(template_path=template_path, output_path=output_path, name=self.server.name, ip=self.server.ip)
 
 
     def _write_named_conf(self) -> None:
