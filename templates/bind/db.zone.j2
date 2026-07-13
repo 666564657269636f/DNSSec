@@ -1,0 +1,12 @@
+$TTL 86400
+
+@ IN SOA {{ name }}. admin.{{ name }}. (
+    1
+    86400
+    3600
+    604800
+    86400
+)
+
+@       IN NS    {{ name }}.
+{{ name }}.    IN A     {{ ip }}
