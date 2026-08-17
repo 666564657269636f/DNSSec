@@ -91,3 +91,21 @@ Monitor CPU utilization in real time using tmux while sending the malicious quer
     ;; global options: +cmd
     ;; no servers could be reached
     ```
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for
+the full license text.
+
+### Third-Party Code
+
+The `CVE-2023-50387/` component contains a portion of code derived from
+[CVE-2023-50387](https://github.com/knqyf263/CVE-2023-50387) by Teppei Fukuda.
+
+The derived code is distributed under the MIT License. The original copyright
+and license notices are preserved in `THIRD-PARTY-NOTICES`.
+
+### References
+
+* Fukuda, T. — [CVE-2023-50387 / KeyTrap](https://github.com/knqyf263/CVE-2023-50387)
+* [CVE-2023-50387](https://nvd.nist.gov/vuln/detail/CVE-2023-50387)
