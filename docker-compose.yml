@@ -37,6 +37,7 @@ services:
     volumes:
       - ./resolver/unbound.conf:/etc/unbound/unbound.conf
       - ./resolver/root.hints:/etc/unbound/root.hints
+      - ./resolver/root.key:/etc/unbound/root.key
     networks:
       dnslab:
         ipv4_address: 10.10.3.1
