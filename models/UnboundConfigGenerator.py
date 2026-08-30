@@ -39,8 +39,8 @@ class UnboundConfigGenerator:
 
 
     def _unbound_conf(self): 
-        template_path: Path = self.input_dir / 'unbound_conf.j2'
-        output_path: Path = self.output_dir / 'unbound_conf'
+        template_path: Path = self.input_dir / 'unbound.conf.j2'
+        output_path: Path = self.output_dir / 'unbound.conf'
         JinjaRender.render(
             template_path = template_path, 
             output_path = output_path, 
