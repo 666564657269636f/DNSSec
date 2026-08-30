@@ -1,15 +1,23 @@
-services:
-{% for server in servers %}
-  {{ server['name'] }}:
+{% macro render_server(server) -%}
+  {{ server.container_name }}:
     build: ./images/bind
-    container_name: {{ server['container_name'] }}
-    hostname: {{ server['hostname'] }}
+    container_name: {{ server.container_name }}
+    hostname: {{ server.hostname }}
     volumes:
-      - ./config/{{ server['container_name'] }}:/etc/bind
+      - ./config/{{ server.container_name }}:/etc/bind
     networks:
       dnslab:
-        ipv4_address: {{ server['ip']}}
-{% endfor %}
+        ipv4_address: {{ server.ip }}
+  {% for child in server.children -%}
+    {{ render_server(child) }}
+  {% endfor -%}
+{% endmacro -%}
+
+services:
+
+  {% for server in servers -%}
+    {{ render_server(server) }}
+  {% endfor -%}
 
   resolver:
     build: ./images/resolver
