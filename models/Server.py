@@ -6,3 +6,4 @@ class Server:
     container_name: str
     hostname: str
     ip: str 
+    children: list["Server"]
