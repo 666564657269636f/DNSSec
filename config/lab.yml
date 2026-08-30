@@ -3,14 +3,15 @@ servers:
     container_name: root
     hostname: root 
     ip: 10.10.1.1
-  
-  - name: com 
-    container_name: com 
-    hostname: com 
-    ip: 10.10.2.1
 
-  - name: test-com
-    container_name: test-com
-    hostname: test-com 
-    ip: 10.10.2.2
-  
+    children:
+    - name: com 
+      container_name: com 
+      hostname: com 
+      ip: 10.10.2.1
+
+      children:
+      - name: test-com
+        container_name: test-com
+        hostname: test-com 
+        ip: 10.10.2.2
