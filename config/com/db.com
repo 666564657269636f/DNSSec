@@ -8,17 +8,9 @@ $TTL 86400
         86400
 )
 
-;
-; Name Server del TLD .com
-;
-
 @       IN NS    com.
 
-;
-; Glue record
-;
-
-com.    IN A     10.10.1.2
+com.    IN A     10.10.2.1
 
 test.com.       IN NS    ns1.test.com.
 ns1.test.com.   IN A     10.10.2.2
