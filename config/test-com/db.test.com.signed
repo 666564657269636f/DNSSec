@@ -1,0 +1,100 @@
+; File written on Sun Aug 30 17:26:29 2026
+; dnssec-signzone version 9.20.26-1-Debian
+test.com.		86400	IN SOA	ns1.test.com. admin.test.com. (
+					2          ; serial
+					86400      ; refresh (1 day)
+					3600       ; retry (1 hour)
+					604800     ; expire (1 week)
+					86400      ; minimum (1 day)
+					)
+			86400	RRSIG	SOA 13 2 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					ILMv+3bvrApDUzWgtYmTeZuLBVNDdL5g5G9+
+					WeH4h3/X3Y2wiGPwOIWr3WT7OM2/fjAy4Edz
+					AeWNE/OWOR2djw== )
+			86400	NS	ns1.test.com.
+			86400	RRSIG	NS 13 2 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					8R2kY1wHLl3klpIRfyhRapk5ygDxYFTig6Ds
+					Zx5GUKYXqqLxvS8l0FifdELKZNMuHAFhse9s
+					AQRtsmi6stCfug== )
+			86400	A	10.10.2.2
+			86400	RRSIG	A 13 2 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					Y4GIOr0WC1pG18ATCkbQbvtV3a06/0R3iQgq
+					N+fCPmLLwExP+wVJoVsM+yd/VC4B7uO6wQAS
+					Qqy2zgLJAmPfiw== )
+			86400	NSEC	ftp.test.com. A NS SOA RRSIG NSEC DNSKEY
+			86400	RRSIG	NSEC 13 2 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					oyOsPQPS3/hTqRUAtOdqmBc/m/7IpdtwZusi
+					sdpujrJdTeg8eby0HwQYzshRd6zz2zXBEyiN
+					gy5DRl2y1Yft4g== )
+			86400	DNSKEY	256 3 13 (
+					80HJbVsKc/twfZ35EQbf3lbr2u8fcj/wv0ld
+					hN1Yd/205fGeeF6pQKGvT5oclvnEewgZ3Aow
+					XTprD955fLZTfQ==
+					) ; ZSK; alg = ECDSAP256SHA256 ; key id = 30805
+			86400	DNSKEY	257 3 13 (
+					fb2W4gn9b/fjpn/KDABGsV5jGeLj0SRv1cF9
+					6E+QhdXukI+lBhPwxPyAOyC3dJpeNkYRt1RD
+					EBekQ7QLxhmC0A==
+					) ; KSK; alg = ECDSAP256SHA256 ; key id = 15984
+			86400	RRSIG	DNSKEY 13 2 86400 (
+					20260929142629 20260830142629 15984 test.com.
+					CQPCgfzNcWERp1oITuSLdW6WEZXgveH4m79B
+					8um5+8Vx9EkpB0j2s+qgHEot4Y57CsBgsQeM
+					MYMb9mjOPP2b/g== )
+			86400	RRSIG	DNSKEY 13 2 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					K5RgR9Vk4qI3Ss3Ym51HfKTLWUGOyFl1Er1M
+					+uAwPos6ZhNFqZOLh7xT31+YD+Fx+fjyW3rg
+					TxXDRVs4LbBCdA== )
+ftp.test.com.		86400	IN CNAME www.test.com.
+			86400	RRSIG	CNAME 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					z7NaMlOoSj8zPhj2dEmFN0Wot2DbX3vsrHmf
+					WlH0z3H1sdhIgOnH5VSD6uURD3LWXhbknHBP
+					rVNjAST9d3WP9A== )
+			86400	NSEC	mail.test.com. CNAME RRSIG NSEC
+			86400	RRSIG	NSEC 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					w4J9TQsSk+WEMnZ4v+U7j5u282CVNpua2WfZ
+					t2KFwbnzNBhrI0jXxpsRR/yQXMW4dckkuZAT
+					1K954Rt3ot+w5Q== )
+mail.test.com.		86400	IN A	10.10.2.20
+			86400	RRSIG	A 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					hu+R7PZQtAWE4zwUDEaKwaNsHvIhH0YFy8Hl
+					R8ISlLgPWKkgrCNQlLaLXKG0ITC+FplYnv2V
+					sohJIB9tku729w== )
+			86400	NSEC	ns1.test.com. A RRSIG NSEC
+			86400	RRSIG	NSEC 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					LpK0lljJOo0RwjO+EGxiF/Jx+zMIFSfKntSJ
+					Gp6sVDueyPlbu7l2+fWc/hIYmV+dRQ8SQglK
+					Ffhci/JwdGoFdg== )
+ns1.test.com.		86400	IN A	10.10.2.2
+			86400	RRSIG	A 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					INB6sxqlcdHctqkKbeY6d9dwmr+skpR0hahP
+					OumRNK7dSytP5FPAYkepgwXH4vI53ulgMYxR
+					2D8ExMC5UFWI2w== )
+			86400	NSEC	www.test.com. A RRSIG NSEC
+			86400	RRSIG	NSEC 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					E7eCvvHvXZB/ddz7ypmug1MCrc/211ITYh5s
+					4cHShzci8LBTXduQgmgUD4z19wiDDEuEg3p+
+					7fhW+3PuM1PTOw== )
+www.test.com.		86400	IN A	10.10.2.2
+			86400	RRSIG	A 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					df/3z6NmPxx9iHwwgE275W4N7mQ4GaMtv0Id
+					Uml6H5epOdUTuUWm99dkvbuG/cY4SIgYfRAa
+					CKwTeSI2fIXM9A== )
+			86400	NSEC	test.com. A RRSIG NSEC
+			86400	RRSIG	NSEC 13 3 86400 (
+					20260929142629 20260830142629 30805 test.com.
+					0eeXSY/M6+CSLU3/GKXCxc+DiXu09fu1U4Y3
+					7yOc5YcKknKBtYnL6206R1awQ8IZgJvLlcAj
+					syImpWi58QSYTA== )
