@@ -11,7 +11,7 @@ servers:
       ip: 10.10.2.1
 
       children:
-      - name: test-com
+      - name: test.com
         container_name: test-com
         hostname: test-com 
         ip: 10.10.2.2
