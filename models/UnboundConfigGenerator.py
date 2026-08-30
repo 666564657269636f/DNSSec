@@ -4,7 +4,7 @@ from models.Server import Server
 from models.JinjaRender import JinjaRender
 
 
-class BindConfigGenerator:
+class UnboundConfigGenerator:
 
     def __init__(self, server: Server, input_dir: Path, output_dir: Path):
         self.server: Server = server
