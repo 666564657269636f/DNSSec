@@ -1,4 +1,4 @@
 zone "com" {
     type master;
-    file "/etc/bind/db.com";
+    file "/etc/bind/db.com.signed";
 };
