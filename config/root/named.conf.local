@@ -1,4 +1,4 @@
 zone "." {
     type master;
-    file "/etc/bind/db.root";
+    file "/etc/bind/db.root.signed";
 };
