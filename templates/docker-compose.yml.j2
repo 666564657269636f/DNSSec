@@ -4,7 +4,7 @@
     container_name: {{ server.container_name }}
     hostname: {{ server.hostname }}
     volumes:
-      - ./config/{{ server.container_name }}:/etc/bind
+      - ./config/dns/{{ server.container_name }}:/etc/bind
     networks:
       dnslab:
         ipv4_address: {{ server.ip }}
