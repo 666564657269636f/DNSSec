@@ -46,7 +46,8 @@ class BindConfigGenerator:
         JinjaRender.render(
             template_path = template_path, 
             output_path = output_path, 
-            name = self.server.name
+            name = self.server.name,
+            zone_name = self.server.zone_name
         )
 
 
