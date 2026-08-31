@@ -24,9 +24,9 @@ services:
     container_name: resolver
     hostname: resolver
     volumes:
-      - ./output/resolver/unbound.conf:/etc/unbound/unbound.conf
-      - ./output/resolver/root.hints:/etc/unbound/root.hints
-      - ./output/resolver/root.key:/etc/unbound/root.key
+      - ./resolver/unbound.conf:/etc/unbound/unbound.conf
+      - ./resolver/root.hints:/etc/unbound/root.hints
+      - ./resolver/root.key:/etc/unbound/root.key
     networks:
       dnslab:
         ipv4_address: 10.10.3.1
