@@ -1,41 +1,90 @@
 from pathlib import Path
 
-from yaml import safe_load
-
-from models.JinjaRender import JinjaRender
 from models.BindConfigGenerator import BindConfigGenerator
+from models.UnboundConfigGenerator import UnboundConfigGenerator
+from models.DockerComposeGenerator import DockerComposeGenerator
 from models.Server import Server
+from models.YAML import YAML
+from models.DNSsec import DNSsec
+from models.ResolverGenerator import ResolverGenerator
 
 
 CONFIG_PATH: Path = Path('config')
 MODELS_PATH: Path = Path('models')
+
 OUTPUT_PATH: Path = Path('output')
+OUTPUT_DNS_PATH: Path = Path('output/dns')
+OUTPUT_RESOLVER_PATH: Path = Path('output/resolver')
+
+
 TEMPLATES_PATH: Path = Path('templates')
+TEMPLATES_BIND_PATH: Path = TEMPLATES_PATH / 'bind'
+TEMPLATES_UNBOUND_PATH: Path = TEMPLATES_PATH / 'unbound'
 
-DOCKER_COMPOSE_PATH: Path = OUTPUT_PATH / 'docker-compose.yml'
-DOCKER_COMPOSE_TEMPLATE_PATH: Path = TEMPLATES_PATH / 'docker-compose.yml.j2'
+LAB_PATH: Path = CONFIG_PATH / 'lab.yml'
 
 
-def load_config(path: Path) -> dict[str, list[dict[str, str]]]:
-    with path.open("r", encoding="utf-8") as file:
-        data: dict[str, list[dict[str, str]]] = safe_load(file)
+def generate_dnssec(server: Server, input_dir: Path, output_dir: Path) -> str:
+    bind: BindConfigGenerator = BindConfigGenerator(
+        server = server,
+        input_dir = input_dir,
+        output_dir = output_dir / server.name
+    )
 
-    return data
+    bind.generate()
+
+    dnssec = DNSsec(
+        output = output_dir / server.name,
+        zone_name = server.name
+    )
+
+    dnssec.generate()
+
+    for child in server.children:
+        ds: str = generate_dnssec(
+            server = child,
+            input_dir = input_dir,
+            output_dir = output_dir
+        )
+
+        dnssec.append_ds(ds = ds)
+
+    dnssec.sign()
+
+    return dnssec.ds
 
 
 def main() -> None:
-    config: dict[str, list[dict[str, str]]] = load_config(path=CONFIG_PATH / 'lab.yml')
+    servers: list[Server] = YAML(LAB_PATH).servers
 
-    JinjaRender.render(template_path=DOCKER_COMPOSE_TEMPLATE_PATH, output_path=DOCKER_COMPOSE_PATH, **config)
-    
-    for server in config['servers']:
-        bind: BindConfigGenerator = BindConfigGenerator(server=Server(
-            server['name'],
-            server['container_name'],
-            server['hostname'],
-            server['ip']
-        ))
-        bind.generate_config()
+    unbound: UnboundConfigGenerator = UnboundConfigGenerator(
+        server = servers[0],
+        input_dir = TEMPLATES_UNBOUND_PATH, 
+        output_dir = OUTPUT_RESOLVER_PATH
+    )
+
+    unbound.generate()
+
+    docker_compose: DockerComposeGenerator = DockerComposeGenerator(
+        server = servers[0],
+        input_dir = TEMPLATES_PATH,
+        output_dir = OUTPUT_PATH
+    )
+
+    docker_compose.generate()
+
+    for server in servers:
+        ds: str = generate_dnssec(
+            server = server,
+            input_dir = TEMPLATES_BIND_PATH,
+            output_dir = OUTPUT_DNS_PATH
+        )
+
+        resolver: ResolverGenerator = ResolverGenerator(
+            output = OUTPUT_RESOLVER_PATH
+        )
+
+        resolver.append_ds(ds = ds)
 
 
 if __name__ == "__main__":
