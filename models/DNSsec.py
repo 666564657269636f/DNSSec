@@ -1,21 +1,23 @@
 from pathlib import Path
-from subprocess import run 
+from subprocess import run, DEVNULL, PIPE
+
 
 class DNSsec:
 
     def __init__(self, output: Path, zone_name: str):
         self.output: Path = output
-        self.zone_name = zone_name
-        self.ksk: Path | None = None
-        self.zsk: Path | None = None
+        self.zone_name: str = zone_name
+        self.ksk: str | None = None
+        self.zsk: str | None = None
         self.ds: str | None = None
 
-    def generate(self):
+    def generate(self) -> None:
         self.output.mkdir(parents = True, exist_ok = True)
         
         self._generate_ksk()
         self._generate_zsk()
         self._generate_ds()
+
 
     def sign(self):
         run(
@@ -24,13 +26,16 @@ class DNSsec:
                 '-S',
                 '-o', self.zone_name,
                 '-N', 'increment',
-                f'db.{ self.zone_name }'
+                f'db.{self.zone_name}'
             ],
             check = True,
-            cwd = self.output
+            cwd = self.output,
+            stdout = DEVNULL,
+            stderr = DEVNULL
         )
 
-    def _generate_ksk(self):
+
+    def _generate_ksk(self) -> None:
         result = run(
             [
                 'dnssec-keygen',
@@ -41,13 +46,15 @@ class DNSsec:
                 self.zone_name
             ],
             check = True,
-            capture_output = True,
+            stdout = PIPE,
+            stderr = DEVNULL,
             text = True
         )
 
         self.ksk = self.output / result.stdout.strip()
 
-    def _generate_zsk(self):
+
+    def _generate_zsk(self) -> None:
         result = run(
             [
                 'dnssec-keygen',
@@ -57,21 +64,32 @@ class DNSsec:
                 self.zone_name
             ],
             check = True,
-            capture_output = True,
+            stdout = PIPE,
+            stderr = DEVNULL,
             text = True
         )
 
         self.zsk = self.output / result.stdout.strip()
 
-    def _generate_ds(self) -> str:
+
+    def _generate_ds(self) -> None:
         result = run(
             [
                 'dnssec-dsfromkey',
                 str(self.ksk) + '.key'
             ],
             check = True,
-            capture_output = True,
+            stdout = PIPE,
+            stderr = DEVNULL,
             text = True
         )
 
-        return result.stdout.strip()
+        self.ds = result.stdout.strip()    
+
+    def append_ds(self, ds: str) -> None:
+        with open(
+            file = self.output / f'db.{ self.zone_name }', 
+            mode = 'a',
+            encoding = 'utf-8'
+        ) as file:
+            file.write(f'\n{ ds }\n')
