@@ -1,0 +1,19 @@
+$TTL 86400
+
+@   IN  SOA root. admin.root. (
+
+        1
+        3600
+        900
+        604800
+        86400
+)
+
+@       IN NS root.
+
+root.   IN A 10.10.1.1
+
+com.    IN NS com.
+
+com.    IN A 10.10.2.1
+com. IN DS 29011 13 2 8D88E0A9FABEE7ABBFE2A01DC51AD2BB921826F752EA3198F10AC67F8ACA6642

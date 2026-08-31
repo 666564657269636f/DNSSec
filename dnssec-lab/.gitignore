@@ -1,0 +1,6 @@
+.venv/
+output/dns
+output/resolver
+output/docker-compose.yml
+__pycache__/
+*.pyc

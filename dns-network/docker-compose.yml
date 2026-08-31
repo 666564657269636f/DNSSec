@@ -1,0 +1,62 @@
+services:
+
+  root:
+    build: ./images/bind
+    container_name: root
+    hostname: root
+    volumes:
+      - ./config/root:/etc/bind
+    networks:
+      dnslab:
+        ipv4_address: 10.10.1.1
+
+  com:
+    build: ./images/bind
+    container_name: com
+    hostname: com
+    volumes:
+      - ./config/com:/etc/bind  
+    networks:
+      dnslab:
+        ipv4_address: 10.10.2.1
+
+  test-com:
+    build: ./images/bind
+    container_name: test-com
+    hostname: test-com
+    volumes:
+      - ./config/test-com:/etc/bind
+    networks:
+      dnslab:
+        ipv4_address: 10.10.2.2
+
+  resolver:
+    build: ./resolver
+    container_name: resolver
+    hostname: resolver
+    volumes:
+      - ./resolver/unbound.conf:/etc/unbound/unbound.conf
+      - ./resolver/root.hints:/etc/unbound/root.hints
+    networks:
+      dnslab:
+        ipv4_address: 10.10.3.1
+
+  client:
+    build: ./client
+    container_name: client
+    hostname: client
+    tty: true           
+    stdin_open: true   
+    dns:
+      - 10.10.3.1 
+    networks:
+      dnslab:
+        ipv4_address: 10.10.4.1
+
+networks:
+  dnslab:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
