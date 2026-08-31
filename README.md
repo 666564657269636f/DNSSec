@@ -1,4 +1,144 @@
-# DNSSec
+# *DNS*sec
+
+## *DNS* Network
+
+```sh
+cd dns-network
+```
+
+This section provides a static *DNS* network used to test and verify basic *DNS* configurations in an isolated environment.
+
+```sh
+docker compose down -v && docker compose up --build -d
+```
+
+## *DNS*sec Network
+
+```sh
+cd dnssec-network
+```
+
+This section provides a static *DNS*sec network used to test and verify *DNS*sec configurations, including zone signing, key management, and validation.
+
+```sh
+docker compose down -v && docker compose up --build -d
+```
+
+## *DNS*sec Lab Generator
+
+```sh
+cd dnssec-lab
+```
+
+This component automatically generates a complete *DNS*sec lab environment, including the required zones, keys, signatures, and Docker Compose configuration.
+
+### Configuration
+
+Before generating the lab, update `lab.yml` configuration file describing the *DNS* hierarchy and the servers to be generated.
+
+```yml
+servers: 
+  - name: root 
+    zone_name: . 
+    container_name: root 
+    hostname: root 
+    ip: <ip> 
+    
+    children: 
+      - name: <name> 
+      zone_name: <zone_name> 
+      container_name: <container_name> 
+      hostname: <hostname> 
+      ip: <ip> 
+      
+      children: 
+      - name: <name> 
+      zone_name: <zone_name> 
+      container_name: <container_name> 
+      hostname: <hostname> 
+      ip: <ip> 
+    
+    children: 
+      ...
+```
+
+### Execution
+
+Generate the environment with:
+
+```sh
+uv venv
+source .venv/bin/activate
+docker compose -f output/docker-compose.yml down -v
+rm -rf output/dns docker-compose.yml
+uv run main.py
+docker compose -f output/docker-compose.yml up --build -d
+```
+
+Access the client container with:
+
+```sh
+docker exec -it client /bin/bash
+```
+
+Verify **Data Integrity and Authentication**:
+
+```sh
+dig A example.it +dnssec
+
+; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A example.it +dnssec
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 29903
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 4, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+;; QUESTION SECTION:
+;example.it.                    IN      A
+
+;; AUTHORITY SECTION:
+it.                     2053    IN      SOA     it. admin.it. 2 86400 3600 604800 86400
+it.                     84853   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 53219 it. K13aaNsBeWjCuC1ocdfOPdzS3ulQKOT/7NN3jo+1femdY/WFEeortGIR N+TyZE0T9xkJ3f6PklU/Upq450Dh3Q==
+it.                     84853   IN      NSEC    ns1.test.it.it. A NS SOA RRSIG NSEC DNSKEY
+it.                     84853   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 53219 it. d5USwBL0LQuifSTe+bQDEYfPV5EvnBTZEmo0ubQSRuXRp4rHY0a1fIAf RMGrhY/YTeTFpzAOCa9opWSD3bmW9Q==
+
+;; Query time: 4 msec
+;; SERVER: 127.0.0.11#53(127.0.0.11) (UDP)
+;; WHEN: Mon Aug 31 15:30:03 UTC 2026
+;; MSG SIZE  rcvd: 314
+```
+
+Verify **Authenticated Denial of Existence**:
+
+```sh
+dig A nope.text.com +dnssec
+
+ <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A nope.text.com +dnssec
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 17912
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags: do; udp: 1232
+;; QUESTION SECTION:
+;nope.text.com.                 IN      A
+
+;; AUTHORITY SECTION:
+com.                    2214    IN      SOA     com. admin.com. 2 86400 3600 604800 86400
+com.                    85014   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 43862 com. yzjV3IXrmQ4EZ02wBgNYqv+xu3pm9bJ/zRt9MfXhPTAzcSGNbnEBAvDS 96Ulu9k8CFzg69AMRLhpPuAH55DBEg==
+com.                    85014   IN      NSEC    ns1.test.com.com. A NS SOA RRSIG NSEC DNSKEY
+com.                    85014   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 43862 com. QeHsT6RRYLKZq6L6YZwS+b111jGnWTdCBbl4eQfPSWN8L59ehjrkAmBN tmgsvhbuY8f91J8r2NKJVDqMrgag1A==
+test.com.               85306   IN      NSEC    com. NS DS RRSIG NSEC
+test.com.               85306   IN      RRSIG   NSEC 13 2 86400 20260930140340 20260831140340 43862 com. bDkWqN1MYUtix6zWHQiQVNiYwJjU6hPEuESnRi8ARODRL5MG5us7nt12 EdJKaOJRGUhcKzsmDGhljQxhWhULng==
+
+;; Query time: 0 msec
+;; SERVER: 127.0.0.11#53(127.0.0.11) (UDP)
+;; WHEN: Mon Aug 31 15:30:20 UTC 2026
+;; MSG SIZE  rcvd: 450
+```
+
 
 ## *DNS*sec KeyTrap Vulnerability (*CVE-2023-50387*)
 
