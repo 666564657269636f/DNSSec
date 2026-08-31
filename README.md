@@ -84,29 +84,31 @@ docker exec -it client /bin/bash
 Verify **Data Integrity and Authentication**:
 
 ```sh
-dig A example.it +dnssec
+dig A example.com +dnssec
 
-; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A example.it +dnssec
+; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A example.com +dnssec
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 29903
-;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 4, ADDITIONAL: 1
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 63458
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
 ;; QUESTION SECTION:
-;example.it.                    IN      A
+;example.com.                   IN      A
 
 ;; AUTHORITY SECTION:
-it.                     2053    IN      SOA     it. admin.it. 2 86400 3600 604800 86400
-it.                     84853   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 53219 it. K13aaNsBeWjCuC1ocdfOPdzS3ulQKOT/7NN3jo+1femdY/WFEeortGIR N+TyZE0T9xkJ3f6PklU/Upq450Dh3Q==
-it.                     84853   IN      NSEC    ns1.test.it.it. A NS SOA RRSIG NSEC DNSKEY
-it.                     84853   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 53219 it. d5USwBL0LQuifSTe+bQDEYfPV5EvnBTZEmo0ubQSRuXRp4rHY0a1fIAf RMGrhY/YTeTFpzAOCa9opWSD3bmW9Q==
+com.                    1995    IN      SOA     com. admin.com. 2 86400 3600 604800 86400
+com.                    84795   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 43862 com. yzjV3IXrmQ4EZ02wBgNYqv+xu3pm9bJ/zRt9MfXhPTAzcSGNbnEBAvDS 96Ulu9k8CFzg69AMRLhpPuAH55DBEg==
+com.                    84795   IN      NSEC    ns1.test.com.com. A NS SOA RRSIG NSEC DNSKEY
+com.                    84795   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 43862 com. QeHsT6RRYLKZq6L6YZwS+b111jGnWTdCBbl4eQfPSWN8L59ehjrkAmBN tmgsvhbuY8f91J8r2NKJVDqMrgag1A==
+ns1.test.com.com.       84795   IN      NSEC    test.com. A RRSIG NSEC
+ns1.test.com.com.       84795   IN      RRSIG   NSEC 13 4 86400 20260930140340 20260831140340 43862 com. bRSs/7AzHkDIi+TjmsR3YRp6wFPUv+1UBX/ojnA1lFc8Md7ra91IoTLe 9i8QzUszocNAWT0d0q+bJxCXcQI7tQ==
 
-;; Query time: 4 msec
+;; Query time: 11 msec
 ;; SERVER: 127.0.0.11#53(127.0.0.11) (UDP)
-;; WHEN: Mon Aug 31 15:30:03 UTC 2026
-;; MSG SIZE  rcvd: 314
+;; WHEN: Mon Aug 31 15:33:59 UTC 2026
+;; MSG SIZE  rcvd: 448
 ```
 
 Verify **Authenticated Denial of Existence**:
