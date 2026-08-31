@@ -35,7 +35,8 @@ def generate_dnssec(server: Server, input_dir: Path, output_dir: Path) -> str:
 
     dnssec = DNSsec(
         output = output_dir / server.name,
-        zone_name = server.name
+        zone_name = server.zone_name,
+        name = server.name
     )
 
     dnssec.generate()
