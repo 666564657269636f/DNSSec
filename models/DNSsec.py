@@ -4,9 +4,10 @@ from subprocess import run, DEVNULL, PIPE
 
 class DNSsec:
 
-    def __init__(self, output: Path, zone_name: str):
+    def __init__(self, output: Path, zone_name: str, name: str):
         self.output: Path = output
         self.zone_name: str = zone_name
+        self.name: str = name
         self.ksk: str | None = None
         self.zsk: str | None = None
         self.ds: str | None = None
@@ -26,7 +27,7 @@ class DNSsec:
                 '-S',
                 '-o', self.zone_name,
                 '-N', 'increment',
-                f'db.{self.zone_name}'
+                f'db.{self.name}'
             ],
             check = True,
             cwd = self.output,
@@ -88,7 +89,7 @@ class DNSsec:
 
     def append_ds(self, ds: str) -> None:
         with open(
-            file = self.output / f'db.{ self.zone_name }', 
+            file = self.output / f'db.{ self.name }', 
             mode = 'a',
             encoding = 'utf-8'
         ) as file:
