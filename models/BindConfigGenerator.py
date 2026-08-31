@@ -26,7 +26,8 @@ class BindConfigGenerator:
             template_path = template_path, 
             output_path = output_path, 
             name = self.server.name, 
-            ip = self.server.ip
+            ip = self.server.ip,
+            children = self.server.children
         )
 
 

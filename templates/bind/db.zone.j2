@@ -10,3 +10,7 @@ $TTL 86400
 
 @       IN NS    {{ name }}.
 {{ name }}.    IN A     {{ ip }}
+
+{% for child in children %}
+{{ child.name }}.    IN NS    {{ child.hostname }}.
+{% endfor %}
