@@ -1,11 +1,13 @@
 servers:
   - name: root
+    zone_name: .
     container_name: root
     hostname: root 
     ip: 10.10.1.1
 
     children:
     - name: com 
+      zone_name: com
       container_name: com 
       hostname: com 
       ip: 10.10.2.1
@@ -13,5 +15,6 @@ servers:
       children:
       - name: test.com
         container_name: test-com
+        zone_name: test.com
         hostname: test-com 
         ip: 10.10.2.2
