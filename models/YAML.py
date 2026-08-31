@@ -27,6 +27,7 @@ class YAML:
 
         return Server(
             name = data['name'],
+            zone_name = data['zone_name'],
             container_name = data['container_name'],
             hostname = data['hostname'],
             ip = data['ip'],
