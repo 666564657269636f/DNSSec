@@ -1,0 +1,52 @@
+{% macro render_server(server) -%}
+  {{ server.container_name }}:
+    build: ./images/bind
+    container_name: {{ server.container_name }}
+    hostname: {{ server.hostname }}
+    volumes:
+      - ./dns/{{ server.name }}:/etc/bind
+    networks:
+      dnslab:
+        ipv4_address: {{ server.ip }}
+  {% for child in server.children -%}
+    {{ render_server(child) }}
+  {% endfor -%}
+{% endmacro -%}
+
+services:
+
+  {% for server in servers -%}
+    {{ render_server(server) }}
+  {% endfor -%}
+
+  resolver:
+    build: ./images/resolver
+    container_name: resolver
+    hostname: resolver
+    volumes:
+      - ./resolver/unbound.conf:/etc/unbound/unbound.conf
+      - ./resolver/root.hints:/etc/unbound/root.hints
+      - ./resolver/root.key:/etc/unbound/root.key
+    networks:
+      dnslab:
+        ipv4_address: 10.10.3.1
+
+  client:
+    build: ./images/client
+    container_name: client
+    hostname: client
+    tty: true           
+    stdin_open: true   
+    dns:
+      - 10.10.3.1 
+    networks:
+      dnslab:
+        ipv4_address: 10.10.4.1
+
+networks:
+  dnslab:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
