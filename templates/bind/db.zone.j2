@@ -12,5 +12,7 @@ $TTL 86400
 {{ name }}.    IN A     {{ ip }}
 
 {% for child in children %}
-{{ child.name }}.    IN NS    {{ child.hostname }}.
+{{ child.name }}.    IN A    {{ child.ip }}
+{{ child.name }}.    IN NS   ns1.{{ child.name }}.
+ns1.{{ child.name }} IN A    {{ child.ip }}
 {% endfor %}
