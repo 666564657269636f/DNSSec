@@ -75,70 +75,62 @@ uv run main.py
 docker compose -f output/docker-compose.yml up --build -d
 ```
 
-Access the client container with:
-
-```sh
-docker exec -it client /bin/bash
-```
-
 Verify **Data Integrity and Authentication**:
 
 ```sh
-dig A example.com +dnssec
+docker exec -it client dig @10.10.3.1 A example.com +dnssec
 
-; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A example.com +dnssec
+; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> @10.10.3.1 A test.com +dnssec
+; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 63458
-;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 8456
+;; flags: qr rd ra ad; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
 ;; QUESTION SECTION:
-;example.com.                   IN      A
+;test.com.                      IN      A
 
-;; AUTHORITY SECTION:
-com.                    1995    IN      SOA     com. admin.com. 2 86400 3600 604800 86400
-com.                    84795   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 43862 com. yzjV3IXrmQ4EZ02wBgNYqv+xu3pm9bJ/zRt9MfXhPTAzcSGNbnEBAvDS 96Ulu9k8CFzg69AMRLhpPuAH55DBEg==
-com.                    84795   IN      NSEC    ns1.test.com.com. A NS SOA RRSIG NSEC DNSKEY
-com.                    84795   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 43862 com. QeHsT6RRYLKZq6L6YZwS+b111jGnWTdCBbl4eQfPSWN8L59ehjrkAmBN tmgsvhbuY8f91J8r2NKJVDqMrgag1A==
-ns1.test.com.com.       84795   IN      NSEC    test.com. A RRSIG NSEC
-ns1.test.com.com.       84795   IN      RRSIG   NSEC 13 4 86400 20260930140340 20260831140340 43862 com. bRSs/7AzHkDIi+TjmsR3YRp6wFPUv+1UBX/ojnA1lFc8Md7ra91IoTLe 9i8QzUszocNAWT0d0q+bJxCXcQI7tQ==
+;; ANSWER SECTION:
+test.com.               86368   IN      A       10.10.2.2
+test.com.               86368   IN      RRSIG   A 13 2 86400 20260929142629 20260830142629 30805 test.com. Y4GIOr0WC1pG18ATCkbQbvtV3a06/0R3iQgqN+fCPmLLwExP+wVJoVsM +yd/VC4B7uO6wQASQqy2zgLJAmPfiw==
 
-;; Query time: 11 msec
-;; SERVER: 127.0.0.11#53(127.0.0.11) (UDP)
-;; WHEN: Mon Aug 31 15:33:59 UTC 2026
-;; MSG SIZE  rcvd: 448
+;; Query time: 0 msec
+;; SERVER: 10.10.3.1#53(10.10.3.1) (UDP)
+;; WHEN: Wed Sep 02 16:00:39 UTC 2026
+;; MSG SIZE  rcvd: 157
 ```
 
 Verify **Authenticated Denial of Existence**:
 
 ```sh
-dig A nope.text.com +dnssec
+docker exec -it client dig @10.10.3.1 A nope.test.com +dnssec
 
- <<>> DiG 9.20.26-1~deb13u1-Debian <<>> A nope.text.com +dnssec
+; <<>> DiG 9.20.26-1~deb13u1-Debian <<>> @10.10.3.1 A nope.test.com +dnssec
+; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 17912
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 55718
 ;; flags: qr rd ra ad; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags: do; udp: 1232
 ;; QUESTION SECTION:
-;nope.text.com.                 IN      A
+;nope.test.com.                 IN      A
 
 ;; AUTHORITY SECTION:
-com.                    2214    IN      SOA     com. admin.com. 2 86400 3600 604800 86400
-com.                    85014   IN      RRSIG   SOA 13 1 86400 20260930140340 20260831140340 43862 com. yzjV3IXrmQ4EZ02wBgNYqv+xu3pm9bJ/zRt9MfXhPTAzcSGNbnEBAvDS 96Ulu9k8CFzg69AMRLhpPuAH55DBEg==
-com.                    85014   IN      NSEC    ns1.test.com.com. A NS SOA RRSIG NSEC DNSKEY
-com.                    85014   IN      RRSIG   NSEC 13 1 86400 20260930140340 20260831140340 43862 com. QeHsT6RRYLKZq6L6YZwS+b111jGnWTdCBbl4eQfPSWN8L59ehjrkAmBN tmgsvhbuY8f91J8r2NKJVDqMrgag1A==
-test.com.               85306   IN      NSEC    com. NS DS RRSIG NSEC
-test.com.               85306   IN      RRSIG   NSEC 13 2 86400 20260930140340 20260831140340 43862 com. bDkWqN1MYUtix6zWHQiQVNiYwJjU6hPEuESnRi8ARODRL5MG5us7nt12 EdJKaOJRGUhcKzsmDGhljQxhWhULng==
+test.com.               3457    IN      SOA     ns1.test.com. admin.test.com. 2 86400 3600 604800 86400
+test.com.               86257   IN      RRSIG   SOA 13 2 86400 20260929142629 20260830142629 30805 test.com. ILMv+3bvrApDUzWgtYmTeZuLBVNDdL5g5G9+WeH4h3/X3Y2wiGPwOIWr 3WT7OM2/fjAy4EdzAeWNE/OWOR2djw==
+test.com.               86400   IN      NSEC    ftp.test.com. A NS SOA RRSIG NSEC DNSKEY
+test.com.               86400   IN      RRSIG   NSEC 13 2 86400 20260929142629 20260830142629 30805 test.com. oyOsPQPS3/hTqRUAtOdqmBc/m/7IpdtwZusisdpujrJdTeg8eby0HwQY zshRd6zz2zXBEyiNgy5DRl2y1Yft4g==
+mail.test.com.          86400   IN      NSEC    ns1.test.com. A RRSIG NSEC
+mail.test.com.          86400   IN      RRSIG   NSEC 13 3 86400 20260929142629 20260830142629 30805 test.com. LpK0lljJOo0RwjO+EGxiF/Jx+zMIFSfKntSJGp6sVDueyPlbu7l2+fWc /hIYmV+dRQ8SQglKFfhci/JwdGoFdg==
 
-;; Query time: 0 msec
-;; SERVER: 127.0.0.11#53(127.0.0.11) (UDP)
-;; WHEN: Mon Aug 31 15:30:20 UTC 2026
-;; MSG SIZE  rcvd: 450
+;; Query time: 8 msec
+;; SERVER: 10.10.3.1#53(10.10.3.1) (UDP)
+;; WHEN: Wed Sep 02 16:02:30 UTC 2026
+;; MSG SIZE  rcvd: 474
 ```
 
 
